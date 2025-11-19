@@ -10,6 +10,8 @@ add_executable(Projet_c
         fonctions.c
         tarjan.c
         hasse.c
+        matrix.c
+        markov.c
 )
 # if (WIN32)
 #     add_compile_options(-finput-charset=UTF-8 -fexec-charset=UTF-8)

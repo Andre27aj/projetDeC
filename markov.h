@@ -27,9 +27,9 @@ void ajouterCellule(Liste *l, int arrivee, float proba);
 ListeAdj creerListeAdj(int taille);
 void afficherListe(const Liste *l);
 void afficherListeAdj(const ListeAdj *g);
-ListeAdj readGraph(const char *filename);
+ListeAdj readMarkovGraph(const char *filename);
 int estGrapheMarkov(const ListeAdj *g);
-char *getId(int num);
+char *getIdMarkov(int num);
 void genererMermaid(const ListeAdj *g, const char *filename);
 
 #endif

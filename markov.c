@@ -56,7 +56,7 @@ void afficherListeAdj(const ListeAdj *g) {
     }
 }
 
-ListeAdj readGraph(const char *filename) {
+ListeAdj readMarkovGraph(const char *filename) {
     FILE *file = fopen(filename, "rt");
     if (!file) {
         perror("Impossible d'ouvrir le fichier");
@@ -106,7 +106,7 @@ int estGrapheMarkov(const ListeAdj *g) {
     return valide;
 }
 
-char *getId(int num) {
+char *getIdMarkov(int num) {
     static char id[10];
     int i = 0;
     num--;
@@ -134,14 +134,14 @@ void genererMermaid(const ListeAdj *g, const char *filename) {
     fprintf(f, "flowchart LR\n");
 
     for (int i = 0; i < g->taille; i++) {
-        fprintf(f, "%s((%d))\n", getId(i + 1), i + 1);
+        fprintf(f, "%s((%d))\n", getIdMarkov(i + 1), i + 1);
     }
     fprintf(f, "\n");
 
     for (int i = 0; i < g->taille; i++) {
         Cellule *tmp = g->tab[i].head;
         while (tmp) {
-            fprintf(f, "%s -->|%.2f|%s\n", getId(i + 1), tmp->proba, getId(tmp->sommet_arrivee));
+            fprintf(f, "%s -->|%.2f|%s\n", getIdMarkov(i + 1), tmp->proba, getIdMarkov(tmp->sommet_arrivee));
             tmp = tmp->suiv;
         }
     }
