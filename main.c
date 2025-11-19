@@ -116,7 +116,5 @@ int main(int argc, char** argv) {
     liberer_ensemble_liens(liens);
     liberer_partition(partition);
     adj_free(&g);
-
-    printf("Fin du programme.\n");
     return 0;
 }
