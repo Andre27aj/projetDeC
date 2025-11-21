@@ -66,9 +66,12 @@ void multiplyMatrices(const t_matrix *A, const t_matrix *B, t_matrix *C) {
 
 float diffMatrices(const t_matrix *M, const t_matrix *N) {
     float diff = 0.0f;
-    for (int i = 0; i < M->rows; ++i)
-        for (int j = 0; j < M->cols; ++j)
-            diff += fabsf(M->data[i][j] - N->data[i][j]);
+    for (int i = 0; i < M->rows; ++i) {
+        for (int j = 0; j < M->cols; ++j) {
+            float d = fabsf(M->data[i][j] - N->data[i][j]);
+            if (d > diff) diff = d;
+        }
+    }
     return diff;
 }
 

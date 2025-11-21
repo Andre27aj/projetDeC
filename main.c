@@ -1,3 +1,5 @@
+// Notre main pour executer le projet complet
+// Groupe Projet : André, Adam, Clément et Roman
 #include <stdio.h>
 #include <stdlib.h>
 #include "fonctions.h"
@@ -6,7 +8,7 @@
 #include "hasse.h"
 #include "matrix.h"
 
-// Helper pour trier les sommets pour l'affichage {1, 5, 7}
+// Trier les sommets pour l'affichage {1, 5, 7}
 int compare_ints(const void* a, const void* b) {
     t_tarjan_vertex* arg1 = (t_tarjan_vertex*)a;
     t_tarjan_vertex* arg2 = (t_tarjan_vertex*)b;
@@ -14,18 +16,14 @@ int compare_ints(const void* a, const void* b) {
 }
 
 int main(int argc, char** argv) {
-    // Nom du fichier par défaut si non fourni
-    const char* filename = (argc > 1) ? argv[1] : "exemple_valid_step3.txt";
+    // Nom de fichier
+    const char* filename = (argc > 1) ? argv[1] : "../data/exemple1.txt";
     const char* outFile = "../data/graph_output.md";
 
     printf("GRAPHES DE MARKOV\n");
 
-    // =========================================================
     // PARTIE 1
-    // =========================================================
-    printf("===================\n");
     printf(" GRAPHE DE MARKOV\n");
-    printf("===================\n\n");
 
     printf("Lecture du graphe depuis : ../data/%s\n\n", filename);
     AdjList g = readGraph(filename);
@@ -42,21 +40,17 @@ int main(int argc, char** argv) {
     export_mermaid(&g, outFile);
     printf("Fichier genere : %s\n\n", outFile);
 
-    // =========================================================
     // PARTIE 2
-    // =========================================================
-    printf("========================================================\n");
     printf("   COMPOSANTES FORTEMENT CONNEXES + DIAGRAMME DE HASSE\n");
-    printf("========================================================\n\n");
 
     printf("ALGORITHME DE TARJAN\n");
 
     t_partition* partition = tarjan(&g);
     printf("Nombre de composantes fortement connexes : %d\n\n", partition->nb_classes);
 
-    // Tri pour l'affichage (C1, C2...)
+    // Tri pour l'affichage
     for(int i=0; i<partition->nb_classes; i++) {
-        // On trie les sommets dans la classe pour avoir {1, 5, 7} et pas {7, 5, 1}
+        // On trie les sommets dans la classe
         qsort(partition->classes[i].sommets, partition->classes[i].nb_sommets, sizeof(t_tarjan_vertex), compare_ints);
 
         printf("Composante %s: {", partition->classes[i].nom);
@@ -107,76 +101,68 @@ int main(int argc, char** argv) {
     else printf("Le graphe de Markov est REDUCTIBLE (%d composantes fortement connexes)\n", partition->nb_classes);
     printf("\n");
 
-    // =========================================================
     // PARTIE 3
-    // =========================================================
-    printf("===============================\n");
     printf("   MATRICES DE PROBABILITES\n");
-    printf("===============================\n\n");
 
     printf("CALCULS MATRICIELS\n");
-    printf("> Exemple avec la matrice donnee dans l'enonce\n\n");
+    printf("> Matrice creee a partir du graphe lu depuis le fichier\n\n");
 
-    // CRÉATION MANUELLE MATRICE MÉTÉO (5x5) pour coller à l'énoncé Partie 3
-    t_matrix M_weather = createZeroMatrix(5);
-    float weather_vals[5][5] = {
-        {0.34, 0.27, 0.00, 0.18, 0.21},
-        {0.20, 0.40, 0.20, 0.00, 0.20},
-        {0.00, 0.41, 0.37, 0.09, 0.13},
-        {0.00, 0.68, 0.20, 0.12, 0.00},
-        {0.12, 0.30, 0.00, 0.00, 0.58}
-    };
-    for(int i=0;i<5;i++) for(int j=0;j<5;j++) M_weather.data[i][j] = weather_vals[i][j];
+    // Création de la matrice à partir du graphe chargé depuis le fichier
+    // Cette matrice est dynamique et correspond aux données du fichier .txt
+    t_matrix M_graph = adjListToMatrix(&g);
+    int n = M_graph.rows; // Taille dynamique du graphe (nombre d'états)
 
-    printf("Matrice initiale M :\n");
-    printMatrix(&M_weather);
+    printf("Matrice initiale M (%dx%d) :\n", n, n);
+    printMatrix(&M_graph);
 
     // M^3
-    t_matrix Temp = createZeroMatrix(5);
-    t_matrix M3 = createZeroMatrix(5);
-    multiplyMatrices(&M_weather, &M_weather, &Temp); // M^2
-    multiplyMatrices(&Temp, &M_weather, &M3); // M^3
+    t_matrix Temp = createZeroMatrix(n);
+    t_matrix M3 = createZeroMatrix(n);
+    multiplyMatrices(&M_graph, &M_graph, &Temp); // M^2
+    multiplyMatrices(&Temp, &M_graph, &M3); // M^3
     printf("\nMatrice a la puissance 3 :\n");
     printMatrix(&M3);
 
     // M^7
-    t_matrix M7 = createZeroMatrix(5);
-    t_matrix M4 = createZeroMatrix(5);
-    multiplyMatrices(&M3, &M_weather, &M4); // M^4
-    multiplyMatrices(&M4, &M3, &M7); // M^7 (approx M^4 * M^3)
+    t_matrix M7 = createZeroMatrix(n);
+    t_matrix M4 = createZeroMatrix(n);
+    multiplyMatrices(&M3, &M_graph, &M4); // M^4
+    multiplyMatrices(&M4, &M3, &M7); // M^7 = M^4 * M^3
     printf("\nMatrice a la puissance 7 :\n");
     printMatrix(&M7);
 
     // Convergence
     printf("\nTest de convergence\n\n");
-    t_matrix Prev = createZeroMatrix(5);
-    t_matrix Curr = createZeroMatrix(5);
-    copyMatrix(&Curr, &M_weather);
+    t_matrix Prev = createZeroMatrix(n);
+    t_matrix Curr = createZeroMatrix(n);
+    copyMatrix(&Curr, &M_graph);
 
     int iter = 1;
-    float diff = 1.0;
+    float diff = 1.0f;
+    int converged = 0;
     while(iter < 100) {
         copyMatrix(&Prev, &Curr);
-        multiplyMatrices(&Prev, &M_weather, &Curr);
+        multiplyMatrices(&Prev, &M_graph, &Curr);
         diff = diffMatrices(&Curr, &Prev);
-        if (diff < 0.01 && iter >= 5) { // On force un peu pour l'exemple
-             printf("Convergence atteinte pour n = %d\n", iter);
+        if (diff < 0.01f) {
+             printf("Convergence atteinte pour n = %d\n", iter+1);
              printf("||M^n - M^(n-1)|| = %.6f < 0.010000\n\n", diff);
-             printf("Matrice M^%d (distribution stationnaire approchee) :\n", iter);
+             printf("Matrice M^%d (distribution stationnaire approchee) :\n", iter+1);
              printMatrix(&Curr);
+             converged = 1;
              break;
         }
         iter++;
     }
 
-    // =========================================================
+    if (!converged) {
+        printf("Convergence non atteinte apres 100 iterations (diff = %.6f)\n\n", diff);
+    }
+
     // PARTIE 3 ETAPE 2 - RETOUR AU GRAPHE PRINCIPAL
-    // =========================================================
-    printf("\nPROPRIETES DES GRAPHES DE MARKOV + Tentative etape 3\n");
+    printf("\nPROPRIETES DES GRAPHES DE MARKOV\n");
     printf("> Nombre de classes = %d\n\n", partition->nb_classes);
 
-    // Matrice complète du graphe 10 noeuds
-    t_matrix M_graph = adjListToMatrix(&g);
 
     for(int k=0; k<partition->nb_classes; k++) {
         t_classe* C = &partition->classes[k];
@@ -217,7 +203,6 @@ int main(int argc, char** argv) {
 
     // Nettoyage
     free(est_transitoire);
-    freeMatrix(&M_weather);
     freeMatrix(&M3);
     freeMatrix(&M7);
     freeMatrix(&Temp);
