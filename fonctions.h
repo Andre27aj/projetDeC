@@ -1,6 +1,4 @@
-//
-// Created by roros on 23/10/2025.
-//
+// Fichier des fonctions
 
 #ifndef FONCTIONS_H
 #define FONCTIONS_H
@@ -26,10 +24,5 @@ bool verify_markov(const AdjList* g);
 
 char* getId(int num); // à free() par l'appelant
 void export_mermaid(const AdjList* g, const char* outFile);
-
-
-
-
-
 
 #endif //FONCTIONS_H

@@ -1,17 +1,15 @@
+// Fichier d'implémentation des fonctions de manipulation de matrices - Partie 3
+// Groupe Projet : André, Adam, Clément et Roman
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include "matrix.h"
-
-// ... (Garde tes fonctions alloc2D, free2D, createEmptyMatrix, createZeroMatrix, freeMatrix, copyMatrix comme avant) ...
-// Je remets les fonctions essentielles ici pour être sûr qu'elles matchent
 
 static float **alloc2D(int n, int m) {
     float **a = (float **)malloc(n * sizeof(float *));
     for (int i = 0; i < n; ++i) a[i] = (float *)calloc(m, sizeof(float));
     return a;
 }
-// ... (Tes fonctions free2D, etc.) ...
 
 t_matrix createZeroMatrix(int n) {
     t_matrix m;

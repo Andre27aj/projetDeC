@@ -1,7 +1,8 @@
+// Fonctions générales pour les listes d'adjacence - Partie 1
+// Groupe Projet : André, Adam, Clément et Roman
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <math.h>
 #include "fonctions.h"
 
 AdjList adj_create(int n) {

@@ -1,6 +1,6 @@
-//
-// Created by roros on 23/10/2025.
-//
+// Fichier .h pour les cellules - Partie 1
+// Groupe Projet : André, Adam, Clément et Roman
+
 #ifndef CELL_H
 #define CELL_H
 #pragma once

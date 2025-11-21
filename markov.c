@@ -1,6 +1,7 @@
+// Fichier source pour la gestion des graphes de Markov - Partie 2
+// Groupe Projet : André, Adam, Clément et Roman
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include "markov.h"
 
 Cellule *creerCellule(int arrivee, float proba) {

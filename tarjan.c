@@ -1,3 +1,5 @@
+//Fichier pour l'algorithme de Tarjan - Partie 2
+// Groupe Projet : André, Adam, Clément et Roman
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -91,7 +93,7 @@ void liberer_classe(t_classe* classe) {
     }
 }
 
-// ========== FONCTIONS POUR PARTITION ==========
+//Fonction pour la repartition
 t_partition* creer_partition_vide() {
     t_partition* partition = (t_partition*)malloc(sizeof(t_partition));
     if (!partition) { perror("malloc partition"); exit(EXIT_FAILURE); }
@@ -130,7 +132,7 @@ void liberer_partition(t_partition* partition) {
     }
 }
 
-// ========== ALGORITHME DE TARJAN ==========
+//ALGORITHME DE TARJAN
 
 // Fonction parcours (récursive)
 static void parcours(int sommet, AdjList* g, t_tarjan_vertex* vertices,
@@ -215,7 +217,7 @@ t_partition* tarjan(AdjList* g) {
     return partition;
 }
 
-// ========== ANALYSE DES CARACTÉRISTIQUES ==========
+//ANALYSE DES CARACTÉRISTIQUES
 void analyser_caracteristiques(t_partition* partition, t_ensemble_liens* liens) {
     // Déterminer quelles classes ont des liens sortants
     int* a_lien_sortant = (int*)calloc(partition->nb_classes, sizeof(int));

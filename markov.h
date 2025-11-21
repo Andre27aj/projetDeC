@@ -1,10 +1,7 @@
+// Fichier .h pour la gestion des graphes de Markov - Partie 2
+// Groupe Projet : André, Adam, Clément et Roman
 #ifndef MARKOV_H
 #define MARKOV_H
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 
 typedef struct Cellule {
     int sommet_arrivee;

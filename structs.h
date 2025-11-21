@@ -1,3 +1,6 @@
+// Fichier pour la definition des structures
+// Groupe Projet : André, Adam, Clément et Roman
+
 #ifndef STRUCTS_H
 #define STRUCTS_H
 

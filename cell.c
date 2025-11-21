@@ -1,8 +1,10 @@
+// Fichier regroupant les fonctions utiles pour les cellules - Partie 1
+// Groupe Projet : André, Adam, Clément et Roman
 
 #include <stdlib.h>
-#include <stdio.h>
 #include "cell.h"
 
+// Fonction de création d'une cellule
 static Cell* create_cell(int dest, float prob) {
     Cell* c = (Cell*)malloc(sizeof(Cell));
     if (!c) { perror("malloc"); exit(EXIT_FAILURE); }

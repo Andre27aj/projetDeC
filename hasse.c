@@ -1,3 +1,5 @@
+// Implémentation des fonctions de gestion du diagramme de Hasse - Partie 2
+// Groupe Projet : André, Adam, Clément et Roman
 #include <stdio.h>
 #include <stdlib.h>
 #include "hasse.h"

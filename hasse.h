@@ -1,3 +1,6 @@
+// Fichier .h pour le diagramme de Hasse - Partie 2
+// Groupe Projet : André, Adam, Clément et Roman
+
 #ifndef HASSE_H
 #define HASSE_H
 

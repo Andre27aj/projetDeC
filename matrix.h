@@ -1,4 +1,5 @@
-// matrix.h
+// Fichier .h pour la gestion des matrices - Partie 3
+// Groupe Projet : André, Adam, Clément et Roman
 #ifndef MATRIX_H
 #define MATRIX_H
 
