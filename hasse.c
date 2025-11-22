@@ -4,7 +4,9 @@
 #include <stdlib.h>
 #include "hasse.h"
 
-// Création d'un ensemble de liens vide
+// Fonctions pour construire et exporter le diagramme de Hasse (relations entre composantes fortement connexes).
+
+// creer_ensemble_liens : initialise un conteneur dynamique pour stocker les arcs entre classes.
 t_ensemble_liens* creer_ensemble_liens() {
     t_ensemble_liens* ensemble = (t_ensemble_liens*)malloc(sizeof(t_ensemble_liens));
     if (!ensemble) { perror("malloc ensemble_liens"); exit(EXIT_FAILURE); }
@@ -17,7 +19,7 @@ t_ensemble_liens* creer_ensemble_liens() {
     return ensemble;
 }
 
-// Vérification de l'existence d'un lien
+// lien_existe : évite doublons (O(n) linéaire, suffisant vu la taille attendue).
 int lien_existe(t_ensemble_liens* ensemble, int depart, int arrivee) {
     if (!ensemble) return 0;
 
@@ -30,7 +32,7 @@ int lien_existe(t_ensemble_liens* ensemble, int depart, int arrivee) {
     return 0;
 }
 
-// Ajout d'un lien
+// ajouter_lien : ajoute (depart -> arrivee), réalloue si capacité atteinte.
 void ajouter_lien(t_ensemble_liens* ensemble, int depart, int arrivee) {
     if (!ensemble) return;
 
@@ -47,7 +49,7 @@ void ajouter_lien(t_ensemble_liens* ensemble, int depart, int arrivee) {
     ensemble->nb_liens++;
 }
 
-// Recensement des liens entre classes selon l'algorithme du sujet
+// recenser_liens : parcourt toutes les arêtes du graphe original et agrège les transitions inter-classes.
 t_ensemble_liens* recenser_liens(AdjList* g, t_partition* partition) {
     t_ensemble_liens* liens = creer_ensemble_liens();
 
@@ -89,7 +91,7 @@ t_ensemble_liens* recenser_liens(AdjList* g, t_partition* partition) {
     return liens;
 }
 
-// Export du diagramme de Hasse au format Mermaid
+// export_hasse_mermaid : sérialise les classes (nœuds) + leurs liens en syntaxe Mermaid (layout orienté vertical).
 void export_hasse_mermaid(t_partition* partition, t_ensemble_liens* liens, const char* filename) {
     FILE* f = fopen(filename, "wt");
     if (!f) { perror("fopen hasse"); exit(EXIT_FAILURE); }
@@ -131,7 +133,7 @@ void export_hasse_mermaid(t_partition* partition, t_ensemble_liens* liens, const
     printf("Diagramme de Hasse exporte dans '%s'\n", filename);
 }
 
-// Libération mémoire
+// liberer_ensemble_liens : libération mémoire propre (table + struct).
 void liberer_ensemble_liens(t_ensemble_liens* ensemble) {
     if (ensemble) {
         free(ensemble->liens);

@@ -5,12 +5,14 @@
 #include <math.h>
 #include "matrix.h"
 
+// Alloue dynamiquement une matrice 2D de taille n x m initialisée à 0
 static float **alloc2D(int n, int m) {
     float **a = (float **)malloc(n * sizeof(float *));
     for (int i = 0; i < n; ++i) a[i] = (float *)calloc(m, sizeof(float));
     return a;
 }
 
+// Crée une matrice carrée n x n remplie de zéros
 t_matrix createZeroMatrix(int n) {
     t_matrix m;
     m.rows = n; m.cols = n;
@@ -18,6 +20,7 @@ t_matrix createZeroMatrix(int n) {
     return m;
 }
 
+// Libère la mémoire allouée pour la matrice
 void freeMatrix(t_matrix *m) {
     if (m->data) {
         for(int i=0; i<m->rows; i++) free(m->data[i]);
@@ -26,24 +29,30 @@ void freeMatrix(t_matrix *m) {
     m->data = NULL;
 }
 
+// Copie le contenu de la matrice src dans dest
 void copyMatrix(t_matrix *dest, const t_matrix *src) {
     for(int i=0; i<src->rows; i++)
         for(int j=0; j<src->cols; j++)
             dest->data[i][j] = src->data[i][j];
 }
 
+// Convertit une liste d'adjacence en matrice de transition (probabilités)
 t_matrix adjListToMatrix(const AdjList *g) {
     t_matrix M = createZeroMatrix(g->size);
     for (int i = 1; i <= g->size; ++i) {
+        // Parcourt la liste chaînée des arcs sortants du sommet i
         const Cell *it = g->lists[i].head;
         while (it) {
+            // Remplit la matrice avec la probabilité de transition vers le sommet 'dest'
             M.data[i-1][it->dest-1] = it->prob; // -1 car indices 0-based dans matrice
+            // Passe à l’arête suivante dans la liste
             it = it->next;
         }
     }
     return M;
 }
 
+// Affiche la matrice dans la console avec 4 décimales
 void printMatrix(const t_matrix *m) {
     for (int i = 0; i < m->rows; ++i) {
         for (int j = 0; j < m->cols; ++j) {
@@ -53,6 +62,7 @@ void printMatrix(const t_matrix *m) {
     }
 }
 
+// Multiplie deux matrices A et B, stocke le résultat dans C
 void multiplyMatrices(const t_matrix *A, const t_matrix *B, t_matrix *C) {
     for (int i = 0; i < A->rows; ++i) {
         for (int j = 0; j < B->cols; ++j) {
@@ -64,6 +74,7 @@ void multiplyMatrices(const t_matrix *A, const t_matrix *B, t_matrix *C) {
     }
 }
 
+// Calcule la plus grande différence absolue entre les éléments de M et N
 float diffMatrices(const t_matrix *M, const t_matrix *N) {
     float diff = 0.0f;
     for (int i = 0; i < M->rows; ++i) {
@@ -75,7 +86,7 @@ float diffMatrices(const t_matrix *M, const t_matrix *N) {
     return diff;
 }
 
-// Fonction pour extraire la sous-matrice d'une classe
+// Extrait la sous-matrice correspondant à une classe d'équivalence donnée
 t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index) {
     t_classe *C = &part.classes[compo_index];
     int k = C->nb_sommets;

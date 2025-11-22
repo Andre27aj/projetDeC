@@ -13,7 +13,7 @@ static int numero_actuel = 0;
 static void parcours(int sommet, AdjList* g, t_tarjan_vertex* vertices,
                      t_pile* pile, t_partition* partition);
 
-// ========== FONCTIONS DE PILE ==========
+// Crée une pile vide avec une capacité donnée, utilisée par l’algorithme de Tarjan
 t_pile* creer_pile(int capacite) {
     t_pile* pile = (t_pile*)malloc(sizeof(t_pile));
     if (!pile) { perror("malloc pile"); exit(EXIT_FAILURE); }
@@ -26,10 +26,12 @@ t_pile* creer_pile(int capacite) {
     return pile;
 }
 
+// Vérifie si la pile est vide
 int pile_est_vide(t_pile* pile) {
     return (pile->top == -1);
 }
 
+// Empile un entier sur la pile (push)
 void empiler(t_pile* pile, int valeur) {
     if (pile->top >= pile->capacite - 1) {
         fprintf(stderr, "Erreur: pile pleine\n");
@@ -38,6 +40,7 @@ void empiler(t_pile* pile, int valeur) {
     pile->data[++pile->top] = valeur;
 }
 
+// Dépile et renvoie l’élément au sommet de la pile (pop)
 int depiler(t_pile* pile) {
     if (pile_est_vide(pile)) {
         fprintf(stderr, "Erreur: pile vide\n");
@@ -46,6 +49,7 @@ int depiler(t_pile* pile) {
     return pile->data[pile->top--];
 }
 
+// Libère la mémoire associée à la pile
 void liberer_pile(t_pile* pile) {
     if (pile) {
         free(pile->data);
@@ -53,7 +57,7 @@ void liberer_pile(t_pile* pile) {
     }
 }
 
-// ========== FONCTIONS POUR CLASSES ==========
+// Crée une nouvelle classe vide pour stocker les sommets d’une CFC
 t_classe creer_classe_vide(const char* nom) {
     t_classe classe;
     strncpy(classe.nom, nom, sizeof(classe.nom) - 1);
@@ -67,6 +71,7 @@ t_classe creer_classe_vide(const char* nom) {
     return classe;
 }
 
+// Ajoute un sommet dans une classe, étend la capacité si nécessaire
 void ajouter_sommet_classe(t_classe* classe, t_tarjan_vertex sommet) {
     if (classe->nb_sommets >= classe->capacite) {
         classe->capacite *= 2;
@@ -77,6 +82,7 @@ void ajouter_sommet_classe(t_classe* classe, t_tarjan_vertex sommet) {
     classe->sommets[classe->nb_sommets++] = sommet;
 }
 
+// Affiche les identifiants des sommets d’une classe
 void afficher_classe(t_classe classe) {
     printf("Composante %s: {", classe.nom);
     for (int i = 0; i < classe.nb_sommets; i++) {
@@ -86,6 +92,7 @@ void afficher_classe(t_classe classe) {
     printf("}\n");
 }
 
+// Libère la mémoire associée aux sommets d’une classe
 void liberer_classe(t_classe* classe) {
     if (classe) {
         free(classe->sommets);
@@ -93,7 +100,7 @@ void liberer_classe(t_classe* classe) {
     }
 }
 
-//Fonction pour la repartition
+// Crée une partition vide contenant plusieurs classes de CFC
 t_partition* creer_partition_vide() {
     t_partition* partition = (t_partition*)malloc(sizeof(t_partition));
     if (!partition) { perror("malloc partition"); exit(EXIT_FAILURE); }
@@ -106,6 +113,7 @@ t_partition* creer_partition_vide() {
     return partition;
 }
 
+// Ajoute une classe dans la partition (CFC trouvée)
 void ajouter_classe_partition(t_partition* partition, t_classe classe) {
     if (partition->nb_classes >= partition->capacite) {
         partition->capacite *= 2;
@@ -116,12 +124,14 @@ void ajouter_classe_partition(t_partition* partition, t_classe classe) {
     partition->classes[partition->nb_classes++] = classe;
 }
 
+// Affiche toutes les classes de la partition
 void afficher_partition(t_partition* partition) {
     for (int i = 0; i < partition->nb_classes; i++) {
         afficher_classe(partition->classes[i]);
     }
 }
 
+// Libère la mémoire de toutes les classes et de la partition
 void liberer_partition(t_partition* partition) {
     if (partition) {
         for (int i = 0; i < partition->nb_classes; i++) {
@@ -132,9 +142,7 @@ void liberer_partition(t_partition* partition) {
     }
 }
 
-//ALGORITHME DE TARJAN
-
-// Fonction parcours (récursive)
+// Parcours DFS principal de l'algorithme de Tarjan pour détecter les CFC
 static void parcours(int sommet, AdjList* g, t_tarjan_vertex* vertices,
                      t_pile* pile, t_partition* partition) {
     // Initialiser le sommet
@@ -181,7 +189,7 @@ static void parcours(int sommet, AdjList* g, t_tarjan_vertex* vertices,
     }
 }
 
-// Fonction principale de Tarjan
+// Lance l’algorithme de Tarjan sur un graphe et renvoie sa partition en CFC
 t_partition* tarjan(AdjList* g) {
     // Initialiser la partition vide
     t_partition* partition = creer_partition_vide();
@@ -217,7 +225,7 @@ t_partition* tarjan(AdjList* g) {
     return partition;
 }
 
-//ANALYSE DES CARACTÉRISTIQUES
+// Analyse les caractéristiques des classes : transitoires, persistantes, absorbantes, irréductibilité
 void analyser_caracteristiques(t_partition* partition, t_ensemble_liens* liens) {
     // Déterminer quelles classes ont des liens sortants
     int* a_lien_sortant = (int*)calloc(partition->nb_classes, sizeof(int));

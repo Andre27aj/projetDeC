@@ -1,10 +1,9 @@
-// Fonctions générales pour les listes d'adjacence - Partie 1
-// Groupe Projet : André, Adam, Clément et Roman
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "fonctions.h"
 
+// Initialise une liste d'adjacence vide avec n sommets (indexés 1..n)
 AdjList adj_create(int n) {
     AdjList g;
     g.size = (n > 0) ? n : 0;
@@ -14,6 +13,7 @@ AdjList adj_create(int n) {
     return g;
 }
 
+// Libère toute la mémoire associée à la liste d'adjacence
 void adj_free(AdjList* g) {
     if (!g || !g->lists) return;
     for (int i = 1; i <= g->size; ++i) list_free(&g->lists[i]);
@@ -22,23 +22,26 @@ void adj_free(AdjList* g) {
     g->size = 0;
 }
 
+// Ajoute une transition probabiliste from -> to en tête de la liste
 void add_edge(AdjList* g, int from, int to, float prob) {
     if (!g || !g->lists) return;
     if (from < 1 || from > g->size || to < 1 || to > g->size) return;
     list_add_front(&g->lists[from], to, prob);
 }
 
+// Affiche toutes les transitions sortantes d’un sommet
 void print_list(const List* l) {
     const Cell* it = l ? l->head : NULL;
     printf("[@head]");
     while (it) {
-        // Format demandé : @-> (7, 0.7500)
+        // Format d'affichage : @-> (sommet, probabilité)
         printf(" @-> (%d, %.4f) ", it->dest, it->prob);
         it = it->next;
     }
     printf("\n");
 }
 
+// Affiche l’ensemble du graphe (chaque sommet et sa liste d’adjacence)
 void print_adj(const AdjList* g) {
     if (!g || !g->lists) return;
     for (int i = 1; i <= g->size; ++i) {
@@ -47,15 +50,16 @@ void print_adj(const AdjList* g) {
     }
 }
 
+// Charge un graphe depuis un fichier : nb sommets puis transitions (u v prob)
 AdjList readGraph(const char* filename) {
     FILE* file = fopen(filename, "rt");
-    if (!file) { 
+    if (!file) {
         // Si échec, on essaie de remonter d'un dossier (cas ../data/)
         char path[100];
         sprintf(path, "../data/%s", filename);
         file = fopen(path, "rt");
         if (!file) {
-             perror("Erreur lecture fichier"); exit(EXIT_FAILURE); 
+             perror("Erreur lecture fichier"); exit(EXIT_FAILURE);
         }
     }
 
@@ -72,6 +76,7 @@ AdjList readGraph(const char* filename) {
     return g;
 }
 
+// Vérifie que chaque sommet possède une distribution de probabilité valide (≈1.0)
 bool verify_markov(const AdjList* g) {
     if (!g || !g->lists) return false;
     bool ok = true;
@@ -84,12 +89,14 @@ bool verify_markov(const AdjList* g) {
     return ok;
 }
 
+// Convertit un entier en chaîne (identifiant textuel)
 char* getId(int num) {
     char* s = (char*)malloc(10);
     sprintf(s, "%d", num);
     return s;
 }
 
+// Exporte le graphe au format Mermaid (graph LR) pour visualisation
 void export_mermaid(const AdjList* g, const char* outFile) {
     FILE* f = fopen(outFile, "wt");
     if (!f) return;
